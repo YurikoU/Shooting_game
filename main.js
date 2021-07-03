@@ -1,6 +1,10 @@
 // https://youtu.be/ZQYgH_JTyKU
 
 
+
+//Game speed (ms)
+const GAME_SPEED = 1000/60;
+
 //Screen size
 const SCREEN_W = 180;
 const SCREEN_H = 320;
@@ -16,15 +20,27 @@ const FIELD_H = SCREEN_H * 2;
 //Max number of stars
 const STAR_MAX = 300;
 
-
 //Canvas
-let $can = document.getElementById('can');
-let con = $can.getContext('2d');
-$can.width = CANVAS_W;
-$can.height = CANVAS_H;
+let $canvas = document.getElementById('can');
+let context = $canvas.getContext('2d');//Set the context as 2D
+$canvas.width = CANVAS_W;
+$canvas.height = CANVAS_H;
+
+//Field (virtual canvas)
+let $virtualCanvas = document.createElement('canvas');
+let virtualContext = $virtualCanvas.getContext('2d');//Set the context as 2D
+$virtualCanvas.width = CANVAS_W;
+$virtualCanvas.height = CANVAS_H;
+
+//Coordinates of the camera
+let camera_x = 0;
+let camera_y = 0;
+
+//Star 
+let star = [];
 
 
-//Return a random integer between the min and the max, and both are inclusive
+//Return a random integer between the min and the max, and both numbers are inclusive
 function rand(min, max) {
     return Math.floor(Math.random() * (max-min+1)) + min;
 }
@@ -45,8 +61,14 @@ class Star {
     };
 
     draw() {
-        con.fillStyle = rand(0,2)!= 0 ? '#66F' : '#8af'; //If rand(0, 2) is NOT 0, chose #66F. Otherwise, choose #8af.
-        con.fillRect(this.x>>8, this.y>>8, this.starSize, this.starSize);
+        let x = this.x>>8;
+        let y = this.y>>8;
+        //If x or y is out of the screen, don't draw
+        if ( x < camera_x  ||  camera_x + SCREEN_W <= x  ||  y < camera_y  ||  camera_y + SCREEN_H <= y ) {
+            return;
+        }
+        virtualContext.fillStyle = rand(0,2)!= 0 ? '#66F' : '#8af'; //If rand(0, 2) is NOT 0, chose #66F. Otherwise, choose #8af.
+        virtualContext.fillRect(this.x>>8, this.y>>8, this.starSize, this.starSize);
     };
 
     //X and Y coordinates will move by the vector
@@ -65,17 +87,40 @@ class Star {
 
 
 
-let star = [];
-for (let i = 0; i < STAR_MAX; i++) {
+//Initialize the game settings
+function gameInit() {
     //Keep instantiating Star() until the max number of stars
-    star[i] = new Star();
-}  
+    for (let i = 0; i < STAR_MAX; i++) {
+        star[i] = new Star();
+    }  
+    
+    //Get gameLoop() work every the certain millisecond
+    setInterval(gameLoop, GAME_SPEED);
+}
 
-//Reset the screen
-con.fillStyle = "black";
-con.fillRect(0, 0, SCREEN_W, SCREEN_H);
 
-for (let i = 0; i < STAR_MAX; i++) {
-    //Draw the new star until the max number of stars
-    star[i].draw();
+function gameLoop () {
+    //Stars will keep moving based on update();
+    for (let i = 0; i < STAR_MAX; i++) {
+        star[i].update();
+    }
+    
+    //Reset the screen so a user can see a star as a dot. Otherwise, a star looks like a line.
+    virtualContext.fillStyle = "black";
+    virtualContext.fillRect(0, 0, SCREEN_W, SCREEN_H);
+    
+    //Draw the new star again until the max number of stars
+    for (let i = 0; i < STAR_MAX; i++) {
+        star[i].draw();
+    }
+
+    //Copy drawing from the virtual screen to the actual screen
+    context.drawImage($virtualCanvas, camera_x, camera_y, SCREEN_W, SCREEN_H,
+        0, 0, CANVAS_W, CANVAS_H);
+}
+
+
+//Start the game once the page is loaded
+window.onload = function() {
+    gameInit();
 }
