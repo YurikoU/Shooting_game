@@ -39,6 +39,75 @@ let camera_y = 0;
 //Star 
 let star = [];
 
+//Keyboard status
+let keyStatus = [];
+
+//Once a key is pressed, switch the status of JavaScript key code (US keyboards) to true
+document.onkeydown = function(e){
+    keyStatus[ e.code ] = true;
+};
+
+//Once a key is released, switch the status of JavaScript key code (US keyboards) to false
+document.onkeyup = function(e){
+    keyStatus[ e.code ] = false;
+};
+
+
+//jiki class
+class Jiki {
+    //The start position is at the center of the field.
+    constructor() {
+        this.x = (FIELD_W/2)<<8;
+        this.y = (FIELD_H/2)<<8;
+        this.speed = 512;
+        this.anime = 0;
+    };
+
+    //Move the sprite position by pressing any arrow key
+    update() {
+
+        //Horizontal movement
+        if ( keyStatus['ArrowLeft'] ) {
+            //Once "←" is pressed, move X to the left side by the sprite speed, leaning the sprite image to the left side
+            this.x -= this.speed;
+            if (-8 < this.anime) {
+                this.anime--;//Sprite image will lean
+            }
+        } else if ( keyStatus['ArrowRight'] ) {
+            //Once "→" is pressed, move X to the right side by the sprite speed, leaning the sprite image to the right side
+            this.x += this.speed;
+            if (this.anime < 8) {
+                this.anime++;//Sprite image will lean
+            }
+        } else {
+            //If either is NOT pressed, the sprite image will be flat automatically
+            if (0 < this.anime) {
+                this.anime--;
+            }
+            if (this.anime < 0) {
+                this.anime++;
+            }
+        }
+
+        //Vertical movement
+        if ( keyStatus['ArrowUp'] ) {
+            //Once "↑" is pressed, move Y to upward by the sprite speed
+            this.y -= this.speed;
+        } else if ( keyStatus['ArrowDown'] ) {
+            //Once "↓" is pressed, move Y to downward by the sprite speed
+            this.y += this.speed;
+        }
+
+    };
+
+    //Draw a sprite that its index is 2, starting from (this.x, this.y)
+    draw() {
+        drawSprite(2 + (this.anime>>2), this.x, this.y);
+    };
+};
+let jiki = new Jiki();
+
+
 //Load the image file
 let spriteImage = new Image();
 spriteImage.src = "sprite.png";
@@ -89,12 +158,12 @@ function drawSprite ( spriteIndex, x, y ) {
 //Return a random integer between the min and the max, and both numbers are inclusive
 function rand(min, max) {
     return Math.floor(Math.random() * (max-min+1)) + min;
-}
+};
 
 
 class Star {
     constructor() {
-        //The coordinates of the beginning
+        //The coordinates of the star beginning
         this.x = rand(0, FIELD_W)<<8;
         this.y = rand(0, FIELD_H)<<8;
 
@@ -129,7 +198,7 @@ class Star {
             this.y = 0;
         }
     };
-}
+};
 
 
 
@@ -142,7 +211,7 @@ function gameInit() {
     
     //Get gameLoop() work every the certain millisecond
     setInterval(gameLoop, GAME_SPEED);
-}
+};
 
 
 function gameLoop () {
@@ -151,6 +220,9 @@ function gameLoop () {
         star[i].update();
     }
     
+    //The sprite location is updated
+    jiki.update();
+
     //Reset the screen so a user can see a star as a dot. Otherwise, a star looks like a line.
     virtualContext.fillStyle = "black";
     virtualContext.fillRect(0, 0, SCREEN_W, SCREEN_H);
@@ -160,17 +232,16 @@ function gameLoop () {
         star[i].draw();
     }
 
-    //Draw a sprite that its index is 2, starting from (100<<8, 100<<8)
-    drawSprite(2, 100<<8, 100<<8);
-
+    //Draw a sprite
+    jiki.draw();
 
     //Copy drawing from the virtual screen to the actual screen
     context.drawImage($virtualCanvas, camera_x, camera_y, SCREEN_W, SCREEN_H,
         0, 0, CANVAS_W, CANVAS_H);
-}
+};
 
 
 //Start the game once the page is loaded
 window.onload = function() {
     gameInit();
-}
+};
