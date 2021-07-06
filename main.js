@@ -39,6 +39,52 @@ let camera_y = 0;
 //Star 
 let star = [];
 
+//Load the image file
+let spriteImage = new Image();
+spriteImage.src = "sprite.png";
+
+//Declare a class for the sprite image
+class Sprite {
+    constructor( x, y, width, height ) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    };
+};
+
+//Size of each sprite image (px)
+let sprite = [
+    new Sprite(  0, 0, 22, 42),//The 1st sprite from sprite.png is from (0,0)   and width: 22px, height: 42px
+    new Sprite( 23, 0, 33, 42),//The 2nd sprite from sprite.png is from (23,0)  and width: 33px, height: 42px
+    new Sprite( 57, 0, 43, 42),//The 3rd sprite from sprite.png is from (57,0)  and width: 43px, height: 42px
+    new Sprite(101, 0, 33, 42),//The 4th sprite from sprite.png is from (101,0) and width: 33px, height: 42px
+    new Sprite(135, 0, 21, 42) //The 5th sprite from sprite.png is from (135,0) and width: 21px, height: 42px
+];
+
+//Draw a sprite image
+function drawSprite ( spriteIndex, x, y ) {
+    let spriteX = sprite[spriteIndex].x;
+    let spriteY = sprite[spriteIndex].y;
+    let spriteWidth = sprite[spriteIndex].width;
+    let spriteHeight = sprite[spriteIndex].height;
+
+    //Get the center of sprites to be at (0, 0), when it's ordered.
+    let px = (x>>8) - spriteWidth/2;
+    let py = (y>>8) - spriteHeight/2;
+
+    //If x or y is out of the screen, don't draw
+    if ( px+spriteWidth/2 < camera_x  ||  camera_x + SCREEN_W <= px-spriteWidth/2  
+        ||  py+spriteHeight/2 < camera_y  ||  camera_y + SCREEN_H <= py-spriteHeight/2 ) 
+    {
+        return;
+    }
+
+
+    virtualContext.drawImage(spriteImage, spriteX, spriteY, spriteWidth, spriteHeight, 
+        px, py, spriteWidth, spriteHeight);
+};
+
 
 //Return a random integer between the min and the max, and both numbers are inclusive
 function rand(min, max) {
@@ -113,6 +159,10 @@ function gameLoop () {
     for (let i = 0; i < STAR_MAX; i++) {
         star[i].draw();
     }
+
+    //Draw a sprite that its index is 2, starting from (100<<8, 100<<8)
+    drawSprite(2, 100<<8, 100<<8);
+
 
     //Copy drawing from the virtual screen to the actual screen
     context.drawImage($virtualCanvas, camera_x, camera_y, SCREEN_W, SCREEN_H,
