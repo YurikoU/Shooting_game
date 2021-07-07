@@ -63,37 +63,37 @@ class Jiki {
         this.anime = 0;
     };
 
-    //Move the sprite position by pressing any arrow key
+    //Move the sprite position by pressing an arrow key
     update() {
 
         //Horizontal movement
-        if ( keyStatus['ArrowLeft'] ) {
+        if ( keyStatus['ArrowLeft'] && this.speed<this.x ) {
             //Once "←" is pressed, move X to the left side by the sprite speed, leaning the sprite image to the left side
             this.x -= this.speed;
-            if (-8 < this.anime) {
+            if ( -8 < this.anime ) {
                 this.anime--;//Sprite image will lean
             }
-        } else if ( keyStatus['ArrowRight'] ) {
+        } else if ( keyStatus['ArrowRight'] && this.x<=(FIELD_W<<8)-this.speed ) {
             //Once "→" is pressed, move X to the right side by the sprite speed, leaning the sprite image to the right side
             this.x += this.speed;
-            if (this.anime < 8) {
+            if ( this.anime < 8 ) {
                 this.anime++;//Sprite image will lean
             }
         } else {
             //If either is NOT pressed, the sprite image will be flat automatically
-            if (0 < this.anime) {
+            if ( 0 < this.anime ) {
                 this.anime--;
             }
-            if (this.anime < 0) {
+            if ( this.anime < 0 ) {
                 this.anime++;
             }
         }
 
         //Vertical movement
-        if ( keyStatus['ArrowUp'] ) {
+        if ( keyStatus['ArrowUp'] && this.speed<this.y ) {
             //Once "↑" is pressed, move Y to upward by the sprite speed
             this.y -= this.speed;
-        } else if ( keyStatus['ArrowDown'] ) {
+        } else if ( keyStatus['ArrowDown'] && this.y<=(FIELD_H<<8)-this.speed ) {
             //Once "↓" is pressed, move Y to downward by the sprite speed
             this.y += this.speed;
         }
@@ -225,7 +225,13 @@ function gameLoop () {
 
     //Reset the screen so a user can see a star as a dot. Otherwise, a star looks like a line.
     virtualContext.fillStyle = "black";
-    virtualContext.fillRect(0, 0, SCREEN_W, SCREEN_H);
+    virtualContext.fillRect(camera_x, camera_y, SCREEN_W, SCREEN_H);
+
+    //Set the sprite always at the absolute center of the camera whenever the sprite moves
+    //Sprite movement range; 0 to FIELD_W
+    //Camera movement range; 0 to (FIELD_W - SCREEN_W)
+    camera_x = (jiki.x>>8) / FIELD_W * (FIELD_W - SCREEN_W);
+    camera_y = (jiki.y>>8) / FIELD_H * (FIELD_H - SCREEN_H);
     
     //Draw the new star again until the max number of stars
     for (let i = 0; i < STAR_MAX; i++) {
@@ -234,6 +240,9 @@ function gameLoop () {
 
     //Draw a sprite
     jiki.draw();
+
+
+
 
     //Copy drawing from the virtual screen to the actual screen
     context.drawImage($virtualCanvas, camera_x, camera_y, SCREEN_W, SCREEN_H,
