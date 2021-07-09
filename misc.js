@@ -38,19 +38,23 @@ class Star {
     };
 };//End Star class
 
+
 //Declare a parent class
 class CharacterBase {
-    constructor(si, x, y, vx, vy) {
+    constructor( si, x, y, vx, vy ) {
         this.spriteIndex = si;
-        this.x = x;
-        this.y = y;
-        this.vectorX = vx;
-        this.vectorY = vy;
-        this.killItself = false;
+        this.x           = x;
+        this.y           = y;
+        this.vectorX     = vx;
+        this.vectorY     = vy;
+        this.killItself  = false;
+        this.count       = 0;//Count how many times constructor() worked ot see each element's HP
     };
 
     //Move the bullet image by the vector 
     update() {
+        this.count++;
+
         this.x += this.vectorX;
         this.y += this.vectorY;
 
@@ -66,6 +70,38 @@ class CharacterBase {
     };
 
 };//End of CharacterBase class
+
+
+//Explosion class
+class Explosion extends CharacterBase {
+    constructor( c, x, y, vx, vy ) {
+        super( 0, x, y, vx, vy );
+        this.timer = c;
+    };
+
+    update() {
+        if ( this.timer ) {//If timer is more than 0
+            this.timer--;
+            return;
+        } 
+        super.update();
+    };
+
+    draw() {
+        if ( this.timer ) {//If timer is more than 0
+            this.timer--;
+            return;
+        } 
+
+        this.spriteIndex = 16 + (this.count>>2);
+        if ( 27 <= this.spriteIndex  ) {//SpriteIndex of explosion images is between #16 and #26
+            this.killItself = true;//Explosion will disappear
+            return;
+        } else {
+            super.draw();
+        }
+    };
+};//End of Explosion class
 
 
 
@@ -137,4 +173,22 @@ function checkHit( x1, y1, r1,  x2, y2, r2 ) {//Used for the hit box setup using
         top2 <= bottom1 );
     */
 
-}
+};
+
+
+//Display a massive explosion
+function explode( x, y, vx, vy ) {
+    explosion.push( 
+        new Explosion( 0, x, y, vx, vy )
+    );
+
+    for ( let i = 0; i < 10; i++ ) {
+        let explodeVectorX = vx + (rand(-10, 10)<<5);
+        let explodeVectorY = vy + (rand(-10, 10)<<5);
+
+        explosion.push( 
+            new Explosion( i, x, y, explodeVectorX, explodeVectorY )
+        );
+    }
+
+};

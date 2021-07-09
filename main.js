@@ -63,6 +63,7 @@ let keyStatus = [];
 let bullet = [];
 let enemy = [];
 let enemyBullet = [];
+let explosion = [];
 let jiki = new Jiki();
 
 
@@ -110,15 +111,16 @@ function updateAll() {
     //Update each position by substituting its object in updateObj() method
     updateObj( star );
     updateObj( bullet );
-    jiki.update();//Update the sprite position
     updateObj( enemyBullet );
     updateObj( enemy );
+    updateObj( explosion );
+    jiki.update();//Update the sprite position
 };
 
 //Draw all objects using drawObj() method
 function drawAll() {
     //Reset the screen so a user can see a star as a dot. Otherwise, a star looks like a line.
-    virtualContext.fillStyle = "black";
+    virtualContext.fillStyle = (jiki.damage) ? "red" : "black";//Screen color is red if jiki's damage is left. Otherwise, it's black.
     virtualContext.fillRect( camera_x, camera_y, SCREEN_W, SCREEN_H );
     
     //Define the camera position so the sprite is always at the center of the camera
@@ -133,6 +135,7 @@ function drawAll() {
     jiki.draw();//Draw a new sprite
     drawObj( enemyBullet );
     drawObj( enemy );
+    drawObj( explosion );
 
     //Copy drawing from the virtual screen to the actual screen
     context.drawImage( $virtualCanvas, camera_x, camera_y, SCREEN_W, SCREEN_H,

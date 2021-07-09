@@ -1,5 +1,18 @@
 class EnemyBullet extends CharacterBase {
-    //EnemyBullet class only use the same methods and properties from CharacterBase class
+    constructor( si, x, y, vx, vy ) {
+        super( si, x, y, vx, vy );
+        this.radius = 4;//Enemy's bullet radius: 4px
+    };
+
+    update() {
+        super.update();
+
+        //Once the enemy's bullet hits jiki AND no damage is left, checkHit() returns true
+        if ( !jiki.damage && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
+            this.killItself = true;
+            jiki.damage     = 10;//Jiki will receive 10 of damage
+        }
+    };
 };//End of EnemyBullet class
 
 
@@ -11,7 +24,7 @@ class Enemy extends CharacterBase {
 
         //this.w = 20;//Enemy width  : 20px
         //this.h = 20;//Enemy height : 20px
-        this.r = 10;//Enemy radius: 10px
+        this.radius = 10;//Enemy radius: 10px
     };
 
     update() {
@@ -41,7 +54,7 @@ class Enemy extends CharacterBase {
             //Math.atan2        : 0 to 2 (radian)
             //Math.cos, Math.sin: 0 to 1
             let angleFromEnemyToJiki   = Math.atan2( (jiki.y - this.y), (jiki.x - this.x) );
-            angleFromEnemyToJiki      += rand( -10, 10 ) * Math.PI / 180;
+            angleFromEnemyToJiki      += rand( -3, 3 ) * Math.PI / 180;
             let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 1000;
             let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 1000;
 
@@ -53,6 +66,13 @@ class Enemy extends CharacterBase {
             if ( -800 < this.vectorY ) {//The enemies will escape
                 this.vectorY -= 30;
             }
+            
+        }
+
+        //Once the enemy directly confronts jiki AND no damage is left, checkHit() returns true
+        if ( !jiki.damage && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
+            this.killItself = true;
+            jiki.damage     = 10;//Jiki will receive 10 of damage
         }
     };
 

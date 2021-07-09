@@ -5,7 +5,7 @@ class Bullet extends CharacterBase {
 
         //this.w = 4;//Bullet width  : 4px
         //this.h = 6;//Bullet height : 6px
-        this.r = 4;//Bullet radius: 4px
+        this.radius = 4;//Bullet radius: 4px
     };
 
     update() {
@@ -15,9 +15,10 @@ class Bullet extends CharacterBase {
         for( let i = 0; i < enemy.length;i++ ) {
             if ( !enemy[i].killItself ) {
                 //Once enemy is killed, checkHit() returns true
-                if ( checkHit(this.x, this.y, this.r, enemy[i].x, enemy[i].y, enemy[i].r) ) {
+                if ( checkHit(this.x, this.y, this.radius, enemy[i].x, enemy[i].y, enemy[i].radius) ) {
                     enemy[i].killItself = true;
                     this.killItself = true;
+                    explode( enemy[i].x, enemy[i].y, enemy[i].vx>>3, enemy[i].vy>>3 );
                     break;
                 }
             }
@@ -40,13 +41,24 @@ class Jiki {
         this.anime   = 0;
         this.reload1 = 0;
         this.reload2 = 0;
+        this.radius  = 10;//Juki's radius: 10px
+        this.damage  = 0;
     };
 
     //Move the sprite position by pressing an arrow key
     update() {
+        //If damage is left, it will lessen by each frame
+        if ( this.damage ) {
+            this.damage--;
+        }
+
         //If the space key is pressed AND this.reload is 0, shoot a bullet
         if ( keyStatus['Space'] && this.reload1==0 ) {
-            bullet.push( new Bullet(this.x+(0<<8), this.y-(10<<8), 0, -1300) );//Add a new instance of Bullet to the existing array object
+            //Add a new instance of Bullet to the existing array object
+            bullet.push( new Bullet(this.x+(4<<8), this.y-(10<<8),    0, -2000) );
+            bullet.push( new Bullet(this.x-(4<<8), this.y-(10<<8),    0, -2000) );
+            bullet.push( new Bullet(this.x+(8<<8), this.y-(10<<8),  400, -2000) );
+            bullet.push( new Bullet(this.x-(8<<8), this.y-(10<<8), -400, -2000) );
             this.reload1 = 4;
 
             //If this.reload2 reaches 4, this.reload1 will be 20 to keep distance between bullets
