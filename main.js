@@ -16,7 +16,7 @@ const GAME_SPEED = 1000/60;
 const SMOOTHING = false;
 
 //Screen size
-const SCREEN_W = 180;
+const SCREEN_W = 320;
 const SCREEN_H = 320;
 
 //Canvas size (the same aspect ratio as the screen size)
@@ -24,8 +24,8 @@ const CANVAS_W = SCREEN_W * 2;
 const CANVAS_H = SCREEN_H * 2;
 
 //Field size
-const FIELD_W = SCREEN_W * 2;
-const FIELD_H = SCREEN_H * 2;
+const FIELD_W = SCREEN_W + 120;
+const FIELD_H = SCREEN_H + 40;
 
 //Max number of stars
 const STAR_MAX = 300;
@@ -90,8 +90,8 @@ function updateObj ( obj ) {
     for ( let i=(obj.length-1); 0 <= i; i-- ) {
         obj[i].update();
 
-        //If deleteBullet is true (= X or Y is beyond the field), erase one array element (its index is #i)
-        if ( obj[i].deleteBullet ) {
+        //If killItself is true (= X or Y is beyond the field), erase one array element (its index is #i)
+        if ( obj[i].killItself ) {
             obj.splice( i, 1 );
         }
     }

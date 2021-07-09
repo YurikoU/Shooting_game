@@ -2,10 +2,26 @@
 class Bullet extends CharacterBase {
     constructor( x, y, vx, vy ) {
         super( 5, x, y, vx, vy );//Dispense the parameters to its parent class
+
+        //this.w = 4;//Bullet width  : 4px
+        //this.h = 6;//Bullet height : 6px
+        this.r = 4;//Bullet radius: 4px
     };
 
     update() {
         super.update();//Inherit update() from its parent class
+
+        //Check if the bullet is hit on the enemy as long as the enemies are still alive
+        for( let i = 0; i < enemy.length;i++ ) {
+            if ( !enemy[i].killItself ) {
+                //Once enemy is killed, checkHit() returns true
+                if ( checkHit(this.x, this.y, this.r, enemy[i].x, enemy[i].y, enemy[i].r) ) {
+                    enemy[i].killItself = true;
+                    this.killItself = true;
+                    break;
+                }
+            }
+        }
     };
 
     draw() {
@@ -30,7 +46,7 @@ class Jiki {
     update() {
         //If the space key is pressed AND this.reload is 0, shoot a bullet
         if ( keyStatus['Space'] && this.reload1==0 ) {
-            bullet.push( new Bullet(this.x, this.y, 0, -2000) );//Add a new instance of Bullet to the existing array object
+            bullet.push( new Bullet(this.x+(0<<8), this.y-(10<<8), 0, -1300) );//Add a new instance of Bullet to the existing array object
             this.reload1 = 4;
 
             //If this.reload2 reaches 4, this.reload1 will be 20 to keep distance between bullets

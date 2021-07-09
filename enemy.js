@@ -8,6 +8,10 @@ class Enemy extends CharacterBase {
     constructor( si, x, y, vx, vy ) {
         super( si, x, y, vx, vy );//Dispense the parameters to its parent class
         this.flag = false;
+
+        //this.w = 20;//Enemy width  : 20px
+        //this.h = 20;//Enemy height : 20px
+        this.r = 10;//Enemy radius: 10px
     };
 
     update() {

@@ -46,7 +46,7 @@ class CharacterBase {
         this.y = y;
         this.vectorX = vx;
         this.vectorY = vy;
-        this.deleteBullet = false;
+        this.killItself = false;
     };
 
     //Move the bullet image by the vector 
@@ -54,9 +54,9 @@ class CharacterBase {
         this.x += this.vectorX;
         this.y += this.vectorY;
 
-        //If X or Y is beyond the field, deleteBullet will turn to true to delete Bullet object
+        //If X or Y is beyond the field, delete will turn to true to delete Bullet object
         if (this.x < 0 || (FIELD_W << 8) < this.x || this.y < 0 || (FIELD_H << 8) < this.y) {
-            this.deleteBullet = true;
+            this.killItself = true;
         }
     };
 
@@ -106,3 +106,35 @@ function drawSprite ( spriteIndex, x, y ) {
 function rand( min, max ) {
     return Math.floor(Math.random() * (max-min+1)) + min;
 };
+
+//Check if the bullet is hit on the enemy
+// function checkHit( x1, y1, w1, h1,  x2, y2, w2, h2 ) {//Used for the hit box setup using rectangles
+function checkHit( x1, y1, r1,  x2, y2, r2 ) {//Used for the hit box setup using circles
+    //Hit box setup using circles
+    let base          = (x2-x1)>>8;
+    let perpendicular = (y2-y1)>>8;
+    let hypotenuse    = r1 + r2;
+
+    //Return TRUE or FALSE depends on if the bullet position rides on the enemy position using Pythagorean Theorem Formula
+    return ( hypotenuse*hypotenuse >= base*base + perpendicular*perpendicular );
+
+    /*
+    //Hit box setup using rectangles
+    let left1   = x1>>8;
+    let right1  = left1 + w1;
+    let top1    = y1>>8;
+    let bottom1 = top1 + h1;
+
+    let left2   = x2>>8;
+    let right2  = left2 + w2;
+    let top2    = y2>>8;
+    let bottom2 = top2 + h2;
+
+    //Return TRUE or FALSE depends on if the bullet position rides on the enemy position
+    return (left2 <= right1 && 
+        left1 <= right2 && 
+        top1 <= bottom2 && 
+        top2 <= bottom1 );
+    */
+
+}
