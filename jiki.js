@@ -1,7 +1,7 @@
 //Bullet class
 class Bullet extends CharacterBase {
     constructor( x, y, vx, vy ) {
-        super( 5, x, y, vx, vy );//Dispense the parameters to its parent class
+        super( 6, x, y, vx, vy );//Dispense the parameters to its parent class
 
         //this.w = 4;//Bullet width  : 4px
         //this.h = 6;//Bullet height : 6px
@@ -37,28 +37,37 @@ class Jiki {
     constructor() {
         this.x = (FIELD_W/2)<<8;
         this.y = (FIELD_H/2)<<8;
-        this.speed   = 512;
-        this.anime   = 0;
-        this.reload1 = 0;
-        this.reload2 = 0;
-        this.radius  = 10;//Juki's radius: 10px
-        this.damage  = 0;
+        this.speed          = 512;
+        this.anime          = 0;
+        this.reload1        = 0;
+        this.reload2        = 0;
+        this.radius         = 10;//Juki's radius: 10px
+        this.damage         = 0;
+        this.unbeatableTime = 0;//Jiki won't get any damage while unbeatableTime lasts
+        this.count          = 0;
     };
 
     //Move the sprite position by pressing an arrow key
     update() {
+        this.count++;
+
         //If damage is left, it will lessen by each frame
         if ( this.damage ) {
             this.damage--;
         }
 
+        //If unbeatableTime is left, it will lessen by each frame
+        if ( this.unbeatableTime ) {
+            this.unbeatableTime--;
+        }
+
         //If the space key is pressed AND this.reload is 0, shoot a bullet
         if ( keyStatus['Space'] && this.reload1==0 ) {
             //Add a new instance of Bullet to the existing array object
-            bullet.push( new Bullet(this.x+(4<<8), this.y-(10<<8),    0, -2000) );
-            bullet.push( new Bullet(this.x-(4<<8), this.y-(10<<8),    0, -2000) );
-            bullet.push( new Bullet(this.x+(8<<8), this.y-(10<<8),  400, -2000) );
-            bullet.push( new Bullet(this.x-(8<<8), this.y-(10<<8), -400, -2000) );
+            bullet.push( new Bullet(this.x+(6<<8), this.y-(10<<8),    0, -2000) );
+            bullet.push( new Bullet(this.x-(6<<8), this.y-(10<<8),    0, -2000) );
+            bullet.push( new Bullet(this.x+(8<<8), this.y-( 5<<8),  200, -2000) );
+            bullet.push( new Bullet(this.x-(8<<8), this.y-( 5<<8), -200, -2000) );
             this.reload1 = 4;
 
             //If this.reload2 reaches 4, this.reload1 will be 20 to keep distance between bullets
@@ -114,6 +123,16 @@ class Jiki {
 
     //Draw a sprite that its index is 2, starting from (this.x, this.y)
     draw() {
-        drawSprite(2 + (this.anime>>2), this.x, this.y);
+        //If unbeatableTime lasts  AND  count&1 is 0, which means, this.count is an even number
+        if ( this.unbeatableTime && (this.count&1) ) {
+            return;
+        }
+        drawSprite(2 + (this.anime>>2), this.x, this.y);//Sprite image
+
+        //If count&1 is 0, which means, this.count is an even number
+        if ( this.count & 1 ) {
+            return;
+        }
+        drawSprite(9 + (this.anime>>2), this.x, this.y + (24<<8));//Jet image
     };
 };//End of Juki class

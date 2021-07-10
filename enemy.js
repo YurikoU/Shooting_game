@@ -8,10 +8,14 @@ class EnemyBullet extends CharacterBase {
         super.update();
 
         //Once the enemy's bullet hits jiki AND no damage is left, checkHit() returns true
-        if ( !jiki.damage && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
-            this.killItself = true;
-            jiki.damage     = 10;//Jiki will receive 10 of damage
+        if ( !jiki.unbeatableTime && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
+            this.killItself     = true;
+            jiki.damage         = 10;//Jiki will receive 10 of damage
+            jiki.unbeatableTime = 60;//Jiki has unbeatable time and it won't get any damage
         }
+
+        
+
     };
 };//End of EnemyBullet class
 
@@ -70,9 +74,10 @@ class Enemy extends CharacterBase {
         }
 
         //Once the enemy directly confronts jiki AND no damage is left, checkHit() returns true
-        if ( !jiki.damage && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
-            this.killItself = true;
-            jiki.damage     = 10;//Jiki will receive 10 of damage
+        if ( !jiki.unbeatableTime && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
+            this.killItself     = true;
+            jiki.damage         = 10;//Jiki will receive 10 of damage
+            jiki.unbeatableTime = 60;//Jiki has unbeatable time and it won't get any damage
         }
     };
 
