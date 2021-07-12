@@ -14,17 +14,18 @@ class EnemyBullet extends CharacterBase {
             jiki.unbeatableTime = 60;//Jiki has unbeatable time and it won't get any damage
         }
 
-        
-
+        //spriteIndex is 14 or 15
+        this.spriteIndex = 14 + ((this.count>>3)&1);//(this.count&1) will return 0 or 1
     };
 };//End of EnemyBullet class
 
 
 //Enemy class
 class Enemy extends CharacterBase {
-    constructor( si, x, y, vx, vy ) {
-        super( si, x, y, vx, vy );//Dispense the parameters to its parent class
-        this.flag = false;
+    constructor( enemyIndex, x, y, vx, vy ) {
+        super( 0, x, y, vx, vy );//Dispense the parameters to its parent class
+        this.flag       = false;
+        this.enemyIndex = enemyIndex;//Declare a new variable to see the enemy index
 
         //this.w = 20;//Enemy width  : 20px
         //this.h = 20;//Enemy height : 20px
@@ -32,47 +33,14 @@ class Enemy extends CharacterBase {
     };
 
     update() {
+        //Common update() process
         super.update();//Inherit update() from its parent class
 
-        //demo
+        //Each enemy movement
+        enemyFunctionArray[this.enemyIndex] ( this );
 
-        if ( !this.flag ) {
-            //The enemy will approach to jiki, if the enemies are far from jiki
-            if ( this.x < jiki.x  &&  this.vectorX < 120 ) {
-                this.vectorX += 4; 
-            } else if ( jiki.x < this.x  &&  -120 < this.vectorX ) {
-                this.vectorX -= 4;
-            }
-        } else {
-            //The enemies will escape, if the enemies are near jiki
-            if ( jiki.x < this.x  &&  this.vectorX < 400 ) {
-                this.vectorX += 30; 
-            } else if ( this.x < jiki.x && -400 < this.vectorX ) {
-                this.vectorX -= 30;
-            }
-        }
         
-        if ( Math.abs(jiki.y - this.y) < (100<<8)  &&  !this.flag ) {//If the enemies come near to jiki within 100px
-            this.flag = true;
-
-            //Math.atan2        : 0 to 2 (radian)
-            //Math.cos, Math.sin: 0 to 1
-            let angleFromEnemyToJiki   = Math.atan2( (jiki.y - this.y), (jiki.x - this.x) );
-            angleFromEnemyToJiki      += rand( -3, 3 ) * Math.PI / 180;
-            let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 1000;
-            let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 1000;
-
-
-            enemyBullet.push( 
-                new EnemyBullet( 15, this.x, this.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
-            );
-
-            if ( -800 < this.vectorY ) {//The enemies will escape
-                this.vectorY -= 30;
-            }
-            
-        }
-
+        //Hit box
         //Once the enemy directly confronts jiki AND no damage is left, checkHit() returns true
         if ( !jiki.unbeatableTime && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
             this.killItself     = true;
@@ -81,10 +49,97 @@ class Enemy extends CharacterBase {
         }
     };
 
-
     draw() {
         super.draw();//Inherit draw() from its parent class
     };
 
-
 };//End of Enemy class
+
+
+
+//Movement Pattern #01 (enemy: pink chick)
+function enemyMove01( obj ) {
+
+    if ( !obj.flag ) {
+        //The enemy will approach to jiki, if the enemies are far from jiki
+        if ( obj.x < jiki.x  &&  obj.vectorX < 120 ) {
+            obj.vectorX += 4; 
+        } else if ( jiki.x < obj.x  &&  -120 < obj.vectorX ) {
+            obj.vectorX -= 4;
+        }
+    } else {
+        //The enemies will escape, if the enemies are near jiki
+        if ( jiki.x < obj.x  &&  obj.vectorX < 400 ) {
+            obj.vectorX += 30; 
+        } else if ( obj.x < jiki.x && -400 < obj.vectorX ) {
+            obj.vectorX -= 30;
+        }
+    }
+    
+    if ( Math.abs(jiki.y - obj.y) < (100<<8)  &&  !obj.flag ) {//If the enemies come near to jiki within 100px
+        obj.flag = true;
+
+        //Math.atan2        : 0 to 2 (radian)
+        //Math.cos, Math.sin: 0 to 1
+        let angleFromEnemyToJiki   = Math.atan2( (jiki.y - obj.y), (jiki.x - obj.x) );
+        angleFromEnemyToJiki      += rand( -3, 3 ) * Math.PI / 180;
+        let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 1000;
+        let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 1000;
+
+
+        enemyBullet.push( 
+            new EnemyBullet( 15, obj.x, obj.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
+        );
+    }
+    
+    if ( -800 < obj.vectorY ) {//The enemies will escape
+        obj.vectorY -= 30;
+    }
+};
+
+
+//Movement Pattern #02 (enemy: yellow chick)
+function enemyMove02() {
+
+    if ( !obj.flag ) {
+        //The enemy will approach to jiki, if the enemies are far from jiki
+        if ( obj.x < jiki.x  &&  obj.vectorX < 120 ) {
+            obj.vectorX += 4; 
+        } else if ( jiki.x < obj.x  &&  -120 < obj.vectorX ) {
+            obj.vectorX -= 4;
+        }
+    } else {
+        //The enemies will escape, if the enemies are near jiki
+        if ( jiki.x < obj.x  &&  obj.vectorX < 400 ) {
+            obj.vectorX += 30; 
+        } else if ( obj.x < jiki.x && -400 < obj.vectorX ) {
+            obj.vectorX -= 30;
+        }
+    }
+    
+    if ( Math.abs(jiki.y - obj.y) < (100<<8)  &&  !obj.flag ) {//If the enemies come near to jiki within 100px
+        obj.flag = true;
+
+        //Math.atan2        : 0 to 2 (radian)
+        //Math.cos, Math.sin: 0 to 1
+        let angleFromEnemyToJiki   = Math.atan2( (jiki.y - obj.y), (jiki.x - obj.x) );
+        angleFromEnemyToJiki      += rand( -3, 3 ) * Math.PI / 180;
+        let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 1000;
+        let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 1000;
+
+
+        enemyBullet.push( 
+            new EnemyBullet( 15, obj.x, obj.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
+        );
+    }
+    
+    if ( -800 < obj.vectorY ) {//The enemies will escape
+        obj.vectorY -= 30;
+    }
+};
+
+
+let enemyFunctionArray = [
+    enemyMove01,
+    enemyMove02,
+];
