@@ -51,6 +51,20 @@ class Enemy extends CharacterBase {
 };//End of Enemy class
 
 
+//Manage the speed of the enemies' shots and the angle
+function enemyShot( obj, speed ) {
+    //Math.atan2        : 0 to 2 (radian)
+    //Math.cos, Math.sin: 0 to 1
+    let angleFromEnemyToJiki   = Math.atan2( (jiki.y - obj.y), (jiki.x - obj.x) );
+    // angleFromEnemyToJiki      += rand( -3, 3 ) * Math.PI / 180; //Change the angle
+    let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * speed;
+    let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * speed;
+
+    enemyBullet.push( 
+        new EnemyBullet( 15, obj.x, obj.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
+    );
+};
+
 
 //Movement Pattern #01 (enemy: pink chick)
 function enemyMove01( obj ) {
@@ -73,24 +87,13 @@ function enemyMove01( obj ) {
     
     if ( Math.abs(jiki.y - obj.y) < (100<<8)  &&  !obj.flag ) {//If the enemies come near to jiki within 100px
         obj.flag = true;
-
-        //Math.atan2        : 0 to 2 (radian)
-        //Math.cos, Math.sin: 0 to 1
-        let angleFromEnemyToJiki   = Math.atan2( (jiki.y - obj.y), (jiki.x - obj.x) );
-        angleFromEnemyToJiki      += rand( -3, 3 ) * Math.PI / 180;
-        let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 1000;
-        let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 1000;
-
-        enemyBullet.push( 
-            new EnemyBullet( 15, obj.x, obj.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
-        );
-
+        enemyShot( obj, 600 );
         
-        if ( -800 < obj.vectorY ) {//The enemies will escape
-            obj.vectorY -= 30;
-        }
     }
 
+    if ( obj.flag  &&  -800 < obj.vectorY ) {//The enemies will escape, once they come to near the sprite
+        obj.vectorY -= 30;
+    }
 
     //Enemy image looks flapping
     const enemyPattern = [ 39, 40, 39, 41 ];
@@ -103,44 +106,33 @@ function enemyMove02( obj ) {
 
     if ( !obj.flag ) {
         //The enemy will approach to jiki, if the enemies are far from jiki
-        if ( obj.x < jiki.x  &&  obj.vectorX < 120 ) {
-            obj.vectorX += 4; 
-        } else if ( jiki.x < obj.x  &&  -120 < obj.vectorX ) {
-            obj.vectorX -= 4;
+        if ( obj.x < jiki.x  &&  obj.vectorX < 600 ) {
+            obj.vectorX += 30; 
+        } else if ( jiki.x < obj.x  &&  -600 < obj.vectorX ) {
+            obj.vectorX -= 30;
         }
     } else {
         //The enemies will escape, if the enemies are near jiki
-        if ( jiki.x < obj.x  &&  obj.vectorX < 400 ) {
+        if ( jiki.x < obj.x  &&  obj.vectorX < 600 ) {
             obj.vectorX += 30; 
-        } else if ( obj.x < jiki.x && -400 < obj.vectorX ) {
+        } else if ( obj.x < jiki.x && -600 < obj.vectorX ) {
             obj.vectorX -= 30;
         }
     }
     
     if ( Math.abs(jiki.y - obj.y) < (100<<8)  &&  !obj.flag ) {//If the enemies come near to jiki within 100px
         obj.flag = true;
-
-        //Math.atan2        : 0 to 2 (radian)
-        //Math.cos, Math.sin: 0 to 1
-        let angleFromEnemyToJiki   = Math.atan2( (jiki.y - obj.y), (jiki.x - obj.x) );
-        angleFromEnemyToJiki      += rand( -3, 3 ) * Math.PI / 180;
-        let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 1000;
-        let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 1000;
-
-
-        enemyBullet.push( 
-            new EnemyBullet( 15, obj.x, obj.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
-        );
-
-        
-        if ( -800 < obj.vectorY ) {//The enemies will escape
-            obj.vectorY -= 30;
-        }
+        enemyShot( obj, 600 );
     }
+    
+    
+    // if ( obj.flag  && -800 < obj.vectorY ) {//The enemies will escape
+    //     obj.vectorY -= 30;
+    // }
 
-        //Enemy image looks flapping
-        const enemyPattern = [ 33, 34, 33, 35 ];
-        obj.spriteIndex = enemyPattern[ (obj.count>>3) & 3 ];//"...&3" is same as "...%4"    
+    //Enemy image looks flapping
+    const enemyPattern = [ 33, 34, 33, 35 ];
+    obj.spriteIndex = enemyPattern[ (obj.count>>3) & 3 ];//"...&3" is same as "...%4"    
 };
 
 
