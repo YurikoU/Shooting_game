@@ -166,7 +166,7 @@ function gameLoop () {
 
     //demo
     if ( rand(0,30)==1 ) {
-        enemy.push( new Enemy(39,  rand(0,FIELD_W)<<8,  0,  0,  rand(300,1200)) );
+        enemy.push( new Enemy(0,  rand(0,FIELD_W)<<8,  0,  0,  rand(300,1200)) );
     }
 
     updateAll();

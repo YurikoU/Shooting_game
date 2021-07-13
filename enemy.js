@@ -25,11 +25,10 @@ class Enemy extends CharacterBase {
     constructor( enemyIndex, x, y, vx, vy ) {
         super( 0, x, y, vx, vy );//Dispense the parameters to its parent class
         this.flag       = false;
+        //this.w        = 20;//Enemy width  : 20px
+        //this.h        = 20;//Enemy height : 20px
+        this.radius     = 10;//Enemy radius: 10px
         this.enemyIndex = enemyIndex;//Declare a new variable to see the enemy index
-
-        //this.w = 20;//Enemy width  : 20px
-        //this.h = 20;//Enemy height : 20px
-        this.radius = 10;//Enemy radius: 10px
     };
 
     update() {
@@ -47,10 +46,6 @@ class Enemy extends CharacterBase {
             jiki.damage         = 10;//Jiki will receive 10 of damage
             jiki.unbeatableTime = 60;//Jiki has unbeatable time and it won't get any damage
         }
-    };
-
-    draw() {
-        super.draw();//Inherit draw() from its parent class
     };
 
 };//End of Enemy class
@@ -86,20 +81,25 @@ function enemyMove01( obj ) {
         let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 1000;
         let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 1000;
 
-
         enemyBullet.push( 
             new EnemyBullet( 15, obj.x, obj.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
         );
+
+        
+        if ( -800 < obj.vectorY ) {//The enemies will escape
+            obj.vectorY -= 30;
+        }
     }
-    
-    if ( -800 < obj.vectorY ) {//The enemies will escape
-        obj.vectorY -= 30;
-    }
+
+
+    //Enemy image looks flapping
+    const enemyPattern = [ 39, 40, 39, 41 ];
+    obj.spriteIndex = enemyPattern[ (obj.count>>3) & 3 ];//"...&3" is same as "...%4"
 };
 
 
 //Movement Pattern #02 (enemy: yellow chick)
-function enemyMove02() {
+function enemyMove02( obj ) {
 
     if ( !obj.flag ) {
         //The enemy will approach to jiki, if the enemies are far from jiki
@@ -131,10 +131,11 @@ function enemyMove02() {
         enemyBullet.push( 
             new EnemyBullet( 15, obj.x, obj.y, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
         );
-    }
-    
-    if ( -800 < obj.vectorY ) {//The enemies will escape
-        obj.vectorY -= 30;
+
+        
+        if ( -800 < obj.vectorY ) {//The enemies will escape
+            obj.vectorY -= 30;
+        }
     }
 };
 
