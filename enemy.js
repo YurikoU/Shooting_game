@@ -137,6 +137,10 @@ function enemyMove02( obj ) {
             obj.vectorY -= 30;
         }
     }
+
+        //Enemy image looks flapping
+        const enemyPattern = [ 33, 34, 33, 35 ];
+        obj.spriteIndex = enemyPattern[ (obj.count>>3) & 3 ];//"...&3" is same as "...%4"    
 };
 
 
