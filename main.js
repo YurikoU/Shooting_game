@@ -42,6 +42,8 @@ context.webkitimageSmoothingEnabled = SMOOTHING;
 context.msimageSmoothingEnabled     = SMOOTHING;
 context.imageSmoothingEnabled       = SMOOTHING;
 
+//Set the font size and family
+context.font = "20px 'Impact'";
 
 //Field (virtual canvas)
 let $virtualCanvas    = document.createElement('canvas');
@@ -52,6 +54,10 @@ $virtualCanvas.height = CANVAS_H;
 //Coordinates of the camera
 let camera_x = 0;
 let camera_y = 0;
+
+//Game over flag
+let gameOver = false;
+let score = 0;
 
 //Star 
 let star = [];
@@ -114,7 +120,9 @@ function updateAll() {
     updateObj( enemyBullet );
     updateObj( enemy );
     updateObj( explosion );
-    jiki.update();//Update the sprite position
+    if ( !gameOver ) {
+        jiki.update();//Update the sprite position
+    }
 };
 
 //Draw all objects using drawObj() method
@@ -131,8 +139,10 @@ function drawAll() {
 
     //Draw each object by substituting its object in drawObj() method
     drawObj( star );
-    drawObj( bullet );        
-    jiki.draw();//Draw a new sprite
+    drawObj( bullet ); 
+    if ( !gameOver ) {
+        jiki.draw();//Draw a new sprite
+    }    
     drawObj( enemyBullet );
     drawObj( enemy );
     drawObj( explosion );
@@ -143,6 +153,23 @@ function drawAll() {
 };
 
 function displayInfo () {
+    context.fillStyle = "white";
+
+    if ( gameOver ) {
+        //Display the messages for the game over
+        let s = " GAME OVER ";
+        let w = context.measureText( s ).width; //The Width of the text
+        let x = CANVAS_W/2 - w/2; //Message position on the X axis
+        let y = CANVAS_H/2 - 20; //Message position on the Y axis
+        context.fillText(s, x, y);
+
+        s = " Press 'R' key to restart! ";
+        w = context.measureText( s ).width; //The Width of the text
+        x = CANVAS_W/2 - w/2; //Message position on the X axis
+        y = CANVAS_H/2 - 20 + 20; //Message position on the Y axis
+        context.fillText(s, x, y);
+    }
+
     if ( DEBUG ) {
         drawCount++;
         if ( lastTime+1000 <= Date.now() ) { //Every second 
@@ -151,12 +178,14 @@ function displayInfo () {
             lastTime  = Date.now();
         }
 
-        context.font = "20px 'Impact'";
-        context.fillStyle = "white";
         context.fillText( "FPS: " + fps, 20, 20 );//Print fps
         context.fillText( "Number of Bullets: " + bullet.length, 20, 40 );//Print the number of bullets
         context.fillText( "Number of Enemies: " + enemy.length, 20, 60 );//Print the number of enemies
         context.fillText( "Enemies' Bullets: " + enemyBullet.length, 20, 80 );//Print the number of enemies
+        context.fillText( "Explosion: " + explosion.length, 20, 100 );//Print the number of enemies
+        context.fillText( "X: " + (jiki.x>>8), 20, 120 );//Print the number of enemies
+        context.fillText( "Y: " + (jiki.y>>8), 20, 140 );//Print the number of enemies
+        context.fillText( "HP: " + jiki.hp, 20, 160 );//Print the number of enemies
     }
 };
 

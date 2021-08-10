@@ -35,8 +35,11 @@ class Bullet extends CharacterBase {
 class Jiki {
     //The start position is at the center of the field.
     constructor() {
-        this.x = (FIELD_W / 2)<<8;
-        this.y = (FIELD_H - 50)<<8;
+        this.x     = (FIELD_W / 2)<<8;
+        this.y     = (FIELD_H - 50)<<8;
+        this.maxHp = 100;
+        this.hp    = this.maxHp;
+        
         this.speed          = 512;
         this.anime          = 0;
         this.reload1        = 0;
