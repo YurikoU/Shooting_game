@@ -3,15 +3,28 @@
 <!DOCTYPE html>
 <html lang="en-CA">
     <head>
-      <meta charset="utf-8">
-      <meta name="author" content="Yuriko Uchida">
-      <meta name="description" content="shooting game">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
-      <title> Shooting Game </title>
+        <meta charset="utf-8">
+        <meta name="author" content="Yuriko Uchida">
+        <meta name="description" content="shooting game">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <title> Shooting Game </title>
     </head>
 
     <body>
+        <div class="float-end">
+            <h2> How To Play </h2>
+            <p> press [Space] key             : shoot a gun forward to kill an enemy </p>
+            <p> press [↑] [↓] [→] [←] key : move by the arrow's direction </p>
+        </div>
+
+        <footer class="fixed-bottom d-flex justify-content-center">
+            <div>
+                <p><small> &copy; <a rel="external" href="https://www.linkedin.com/in/yuriko-uchida/" target="_blank"> Yuriko Uchida </a></small></p>
+                <time datetime="2021-08-09"><small> August 9, 2021 </small></time>
+            </div>
+        </footer>
+
         <canvas id="can"></canvas>
         <script src="./misc.js"></script>
         <script src="./data.js"></script>
