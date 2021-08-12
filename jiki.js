@@ -2,9 +2,6 @@
 class Bullet extends CharacterBase {
     constructor( x, y, vx, vy ) {
         super( 6, x, y, vx, vy );//Dispense the parameters to its parent class
-
-        //this.w = 4;//Bullet width  : 4px
-        //this.h = 6;//Bullet height : 6px
         this.radius = 4;//Bullet radius: 4px
     };
 
@@ -16,9 +13,16 @@ class Bullet extends CharacterBase {
             if ( !enemy[i].killItself ) {
                 //Once enemy is killed, checkHit() returns true
                 if ( checkHit(this.x, this.y, this.radius, enemy[i].x, enemy[i].y, enemy[i].radius) ) {
-                    enemy[i].killItself = true;
                     this.killItself = true;
-                    explode( enemy[i].x, enemy[i].y, enemy[i].vx>>3, enemy[i].vy>>3 );
+                    //If the enemy's HP was less than 0, then delete the killed enemy
+                    if ( (enemy[i].hp -= 10)  <=  0 ) {
+                        enemy[i].killItself = true;
+                        explode( enemy[i].x, enemy[i].y, enemy[i].vx>>3, enemy[i].vy>>3 );
+                        score += enemy[i].score;
+                    } else {
+                        //If the attacked enemy is still alive, jiki will explode
+                        explosion.push(new Explosion( 0, enemy[i].x, enemy[i].y, 0, 0 ));
+                    }
                     break;
                 }
             }

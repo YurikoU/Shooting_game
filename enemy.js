@@ -26,13 +26,13 @@ class EnemyBullet extends CharacterBase {
 
 //Enemy class
 class Enemy extends CharacterBase {
-    constructor( enemyIndex, x, y, vx, vy ) {
+    constructor( index, x, y, vx, vy ) {
         super( 0, x, y, vx, vy );//Dispense the parameters to its parent class
+        this.enemyIndex = enemyMaster[index].num; //Declare a new variable to see the enemy index
+        this.radius     = enemyMaster[index].radius; //Enemy radius
+        this.hp         = enemyMaster[index].hp; 
+        this.score      = enemyMaster[index].score;
         this.flag       = false;
-        //this.w        = 20;//Enemy width  : 20px
-        //this.h        = 20;//Enemy height : 20px
-        this.radius     = 10;//Enemy radius: 10px
-        this.enemyIndex = enemyIndex;//Declare a new variable to see the enemy index
     };
 
     update() {
@@ -59,8 +59,13 @@ class Enemy extends CharacterBase {
 };//End of Enemy class
 
 
-//Manage the speed of the enemies' shots and the angle
+//Manage the speed of the enemies' shots and the angle toward
 function enemyShot( obj, speed ) {
+
+    if ( gameOver ) {
+        return;
+    }
+
     //Math.atan2        : 0 to 2 (radian)
     //Math.cos, Math.sin: 0 to 1
     let angleFromEnemyToJiki   = Math.atan2( (jiki.y - obj.y), (jiki.x - obj.x) );

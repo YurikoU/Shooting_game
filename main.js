@@ -183,9 +183,10 @@ function displayInfo () {
         context.fillText( "Number of Enemies: " + enemy.length, 20, 60 );//Print the number of enemies
         context.fillText( "Enemies' Bullets: " + enemyBullet.length, 20, 80 );//Print the number of enemies
         context.fillText( "Explosion: " + explosion.length, 20, 100 );//Print the number of enemies
-        context.fillText( "X: " + (jiki.x>>8), 20, 120 );//Print the number of enemies
-        context.fillText( "Y: " + (jiki.y>>8), 20, 140 );//Print the number of enemies
-        context.fillText( "HP: " + jiki.hp, 20, 160 );//Print the number of enemies
+        context.fillText( "X: " + (jiki.x>>8), 20, 120 );//Print the Jiki's position on the X-axis
+        context.fillText( "Y: " + (jiki.y>>8), 20, 140 );//Print the Jiki's position on the Y-axis
+        context.fillText( "HP: " + jiki.hp, 20, 160 );//Print the jiki's HP
+        context.fillText( "SCORE: " + score, 20, 180 );//Print the jiki's score using the global variable "score"
     }
 };
 

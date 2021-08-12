@@ -108,6 +108,12 @@ class Explosion extends CharacterBase {
 //Once a key is pressed, switch the status of JavaScript key code (US keyboards) to true
 document.onkeydown = function (e) {
     keyStatus[e.code] = true;
+    if ( gameOver  &&  e.code === 'KeyR' ) {
+        delete jiki;
+        jiki = new Jiki();
+        gameOver = false;
+        score    = 0;
+    }
 };
 
 //Once a key is released, switch the status of JavaScript key code (US keyboards) to false

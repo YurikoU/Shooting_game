@@ -1,4 +1,24 @@
 //Declare a class for the sprite image
+
+
+class EnemyMaster {
+    constructor ( num, r, hp, score ) {
+        this.num    = num;
+        this.radius = r;
+        this.hp     = hp;
+        this.score  = score;
+    }
+}
+
+
+let enemyMaster = 
+[
+    new EnemyMaster( 0, 10, 100, 100 ), //Pink chick
+    new EnemyMaster( 1, 10,   1, 100 )  //Yellow chick
+];
+
+
+
 class Sprite {
     constructor( x, y, w, h ) {
         this.x = x;
