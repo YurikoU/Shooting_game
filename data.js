@@ -13,8 +13,9 @@ class EnemyMaster {
 
 let enemyMaster = 
 [
-    new EnemyMaster( 0, 10, 100, 100 ), //Pink chick
-    new EnemyMaster( 1, 10,   1, 100 )  //Yellow chick
+    new EnemyMaster( 0, 10,     1,   100 ), //Pink chick
+    new EnemyMaster( 1, 10,     1,   100 ), //Yellow chick
+    new EnemyMaster( 2, 70, 10000, 10000 ), //Final boss (large yellow chick)
 ];
 
 

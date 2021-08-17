@@ -1,10 +1,20 @@
 class EnemyBullet extends CharacterBase {
-    constructor( si, x, y, vx, vy ) {
+    constructor( si, x, y, vx, vy, t ) {
         super( si, x, y, vx, vy );
-        this.radius = 4;//Enemy's bullet radius: 4px
+        this.radius = 3;//Enemy's bullet radius: 4px
+        if ( t == undefined ) {
+            this.timer  = 0;
+        } else {
+            this.timer  = t;
+        }
     };
 
     update() {
+        if ( this.timer ) {
+            this.timer--;
+            return;
+        }
+
         super.update();
 
         //Once the enemy's bullet hits jiki AND no damage is left AND it's not game over, checkHit() returns true
@@ -33,6 +43,7 @@ class Enemy extends CharacterBase {
         this.hp         = enemyMaster[index].hp; 
         this.score      = enemyMaster[index].score;
         this.flag       = false;
+        this.direction  = 90;
     };
 
     update() {
@@ -148,8 +159,55 @@ function enemyMove02( obj ) {
     obj.spriteIndex = enemyPattern[ (obj.count>>3) & 3 ];//"...&3" is same as "...%4"    
 };
 
+//Movement Pattern #03 (enemy: boss enemy)
+function enemyMove03( obj ) {
+
+    if ( !obj.flag  &&  60 <= (obj.y>>8) ) {
+        obj.flag = 1;
+    } 
+
+    if ( obj.flag == 1 ) {
+        if ( (obj.vectorY-=2) <= 0 ) {
+            obj.flag    = 2;
+            obj.vectorY = 0;
+        }
+    } else if ( obj.flag == 2 ) {
+        if ( obj.vectorX < 300 ) {
+            obj.vectorX += 10;
+        }
+        if ( (FIELD_W-100) < (obj.x>>8) ) {
+            obj.flag    = 3;
+        }
+    } else if ( obj.flag == 3 ) { 
+        if ( -300 < obj.vectorX ) {
+            obj.vectorX -= 10;
+        }
+        if ( (obj.x>>8) < 100 ) {
+            obj.flag    = 2;
+        }
+    }
+
+    //Shoot a bullet
+    let angleFromEnemyToJiki   = obj.direction * Math.PI / 180;
+    let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 300;
+    let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 300;
+    let vectorX2               = ( Math.cos( angleFromEnemyToJiki ) * 70 )<<8;
+    let vectorY2               = ( Math.sin( angleFromEnemyToJiki ) * 70 )<<8;
+    enemyBullet.push( 
+        new EnemyBullet( 15, obj.x+vectorX2, obj.y+vectorY2, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki, 60 )
+    );
+
+    if ( 360 <= (obj.direction+=12) ) {
+        obj.direction = 0;
+    }
+
+    // //Enemy image looks flapping
+    obj.spriteIndex = 75;
+};
+
 
 let enemyFunctionArray = [
     enemyMove01,
     enemyMove02,
+    enemyMove03,
 ];

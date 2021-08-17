@@ -21,7 +21,7 @@ class Bullet extends CharacterBase {
                         score += enemy[i].score;
                     } else {
                         //If the attacked enemy is still alive, jiki will explode
-                        explosion.push(new Explosion( 0, enemy[i].x, enemy[i].y, 0, 0 ));
+                        explosion.push(new Explosion( 0, this.x, this.y, 0, 0 ));
                     }
                     break;
                 }
@@ -48,7 +48,7 @@ class Jiki {
         this.anime          = 0;
         this.reload1        = 0;
         this.reload2        = 0;
-        this.radius         = 10;//Juki's radius: 10px
+        this.radius         = 3;//Juki's radius: 10px
         this.damage         = 0;
         this.unbeatableTime = 0;//Jiki won't get any damage while unbeatableTime lasts
         this.count          = 0;

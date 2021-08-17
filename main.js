@@ -194,12 +194,14 @@ function displayInfo () {
 //Repeat endlessly while playing
 function gameLoop () {
 
+    /*
     //demo
     if ( rand(0,30)==1 ) {
         let randomNum = rand(0, 1);
         enemy.push( new Enemy(randomNum,  rand(0,FIELD_W)<<8,  0,  0,  rand(300,1200)) );
     }
-
+    */
+    
     updateAll();
     drawAll();
     displayInfo();
@@ -208,4 +210,5 @@ function gameLoop () {
 //Start the game once the page is loaded
 window.onload = function() {
     gameInit();
+    enemy.push( new Enemy( 2, rand(0,FIELD_W/2)<<8,  0,  0,  200 ) );
 };
