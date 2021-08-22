@@ -23,6 +23,7 @@ class Bullet extends CharacterBase {
                         //If the attacked enemy is still alive, jiki will explode
                         explosion.push(new Explosion( 0, this.x, this.y, 0, 0 ));
                     }
+
                     break;
                 }
             }

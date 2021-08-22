@@ -57,7 +57,11 @@ let camera_y = 0;
 
 //Game over flag
 let gameOver = false;
-let score = 0;
+let score    = 0;
+
+//Boss enemy's HP
+let bossHp    = 0;
+let bossMaxHp = 0;
 
 //Star 
 let star = [];
@@ -66,11 +70,11 @@ let star = [];
 let keyStatus = [];
 
 //Objects
-let bullet = [];
-let enemy = [];
+let bullet      = [];
+let enemy       = [];
 let enemyBullet = [];
-let explosion = [];
-let jiki = new Jiki();
+let explosion   = [];
+let jiki        = new Jiki();
 
 
 //Load the image file
@@ -129,13 +133,8 @@ function updateAll() {
 function drawAll() {
     //Reset the screen so a user can see a star as a dot. Otherwise, a star looks like a line.
     virtualContext.fillStyle = (jiki.damage) ? "red" : "black";//Screen color is red if jiki's damage is left. Otherwise, it's black.
-    virtualContext.fillRect( camera_x, camera_y, SCREEN_W, SCREEN_H );
-    
-    //Define the camera position so the sprite is always at the center of the camera
-    //Sprite movement range; 0 to FIELD_W
-    //Camera movement range; 0 to (FIELD_W - SCREEN_W)
-    camera_x = (jiki.x>>8) / FIELD_W * (FIELD_W - SCREEN_W);//Set the relative position to camera_x depends on jiki.x
-    camera_y = (jiki.y>>8) / FIELD_H * (FIELD_H - SCREEN_H);
+    virtualContext.fillRect( camera_x, camera_y, SCREEN_W, SCREEN_H );   
+
 
     //Draw each object by substituting its object in drawObj() method
     drawObj( star );
@@ -146,6 +145,24 @@ function drawAll() {
     drawObj( enemyBullet );
     drawObj( enemy );
     drawObj( explosion );
+
+    
+    //Define the camera position so the sprite is always at the center of the camera
+    //Sprite movement range; 0 to FIELD_W
+    //Camera movement range; 0 to (FIELD_W - SCREEN_W)
+    camera_x = (jiki.x>>8) / FIELD_W * (FIELD_W - SCREEN_W);//Set the relative position to camera_x depends on jiki.x
+    camera_y = (jiki.y>>8) / FIELD_H * (FIELD_H - SCREEN_H);
+
+
+    //Print the boss enemy's HP
+    if ( 0 < bossHp ) {
+        let size  = ( SCREEN_W - 20 ) * bossHp / bossMaxHp;
+        let size2 = SCREEN_W - 20;
+        virtualContext.fillStyle = "rgba(255, 0, 0, 0.5)";
+        virtualContext.fillRect( camera_x+10, camera_y+10, size, 10 );
+        virtualContext.strokeStyle = "rgba(255, 0, 0, 0.9)";
+        virtualContext.strokeRect(camera_x+10, camera_y+10, size2, 10);
+    }
 
     //Copy drawing from the virtual screen to the actual screen
     context.drawImage( $virtualCanvas, camera_x, camera_y, SCREEN_W, SCREEN_H,
