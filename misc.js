@@ -7,7 +7,7 @@ class Star {
 
         //The vector of the X or Y axis direction 
         this.vectorX = 0;//NOT move horizontally
-        this.vectorY = rand( 30, 200 );
+        this.vectorY = rand( 100, 300 );
 
         //Star size
         this.starSize = rand( 1, 2 );
@@ -26,8 +26,8 @@ class Star {
 
     //X and Y coordinates will move by the vector
     update() {
-        this.x += this.vectorX;
-        this.y += this.vectorY;
+        this.x += this.vectorX * starSpeed / 100;
+        this.y += this.vectorY * starSpeed / 100;
 
         //If Y reach at the bottom of the field, Y is back to 0
         //X will be also a new random integer
@@ -59,7 +59,7 @@ class CharacterBase {
         this.y += this.vectorY;
 
         //If X or Y is beyond the field, delete will turn to true to delete Bullet object
-        if (this.x < 0 || (FIELD_W << 8) < this.x || this.y < 0 || (FIELD_H << 8) < this.y) {
+        if (this.x+(100<<8) < 0 || (FIELD_W << 8) < this.x-(100<<8) || this.y+(100<<8) < 0 || (FIELD_H << 8) < this.y-(100<<8)) {
             this.killItself = true;
         }
     };

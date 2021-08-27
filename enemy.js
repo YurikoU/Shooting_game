@@ -67,7 +67,11 @@ class Enemy extends CharacterBase {
         //Hit box
         //Once the enemy directly confronts jiki AND no damage is left AND it's not game over, checkHit() returns true
         if ( !gameOver && !jiki.unbeatableTime && checkHit(this.x, this.y, this.radius, jiki.x, jiki.y, jiki.radius) ) {
-            this.killItself     = true;
+
+            if ( this.maxHp < 500 ) {
+                this.killItself     = true;
+            }
+
             if ( (jiki.hp -= 30) <= 0 ) {
                 gameOver = true;
             } else {
@@ -86,6 +90,18 @@ function enemyShot( obj, speed ) {
     if ( gameOver ) {
         return;
     }
+
+    //Get the center of sprites to be at (0, 0), when it's ordered.
+    let px = obj.x>>8;
+    let py = obj.y>>8;
+
+    //If an enemy is out of the screen, the enemy doesn't shot
+    if ( px - 40 < camera_x  ||  camera_x + SCREEN_W <= px + 40  
+        ||  py - 40 < camera_y  ||  camera_y + SCREEN_H <= py + 40 ) 
+    {
+        return;
+    }
+
 
     //Math.atan2        : 0 to 2 (radian)
     //Math.cos, Math.sin: 0 to 1
@@ -213,6 +229,7 @@ function enemyMove03( obj ) {
             obj.direction = 0;
         }
     }
+
 
     //Additional attacks by additional enemies
     if ( obj.hp < obj.maxHp/2 ) {

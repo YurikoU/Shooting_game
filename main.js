@@ -3,7 +3,8 @@
 
 
 //Flag for debugging
-const DEBUG = true;
+// const DEBUG = true;
+const DEBUG = false;
 
 let drawCount = 0;
 let fps       = 0;
@@ -50,6 +51,7 @@ let $virtualCanvas    = document.createElement('canvas');
 let virtualContext    = $virtualCanvas.getContext('2d');//Set the context as 2D
 $virtualCanvas.width  = CANVAS_W;
 $virtualCanvas.height = CANVAS_H;
+virtualContext.font   = "12px 'Impact'";
 
 //Coordinates of the camera
 let camera_x = 0;
@@ -142,16 +144,16 @@ function drawAll() {
     if ( !gameOver ) {
         jiki.draw();//Draw a new sprite
     }    
-    drawObj( enemyBullet );
     drawObj( enemy );
     drawObj( explosion );
+    drawObj( enemyBullet );
 
     
     //Define the camera position so the sprite is always at the center of the camera
     //Sprite movement range; 0 to FIELD_W
     //Camera movement range; 0 to (FIELD_W - SCREEN_W)
-    camera_x = (jiki.x>>8) / FIELD_W * (FIELD_W - SCREEN_W);//Set the relative position to camera_x depends on jiki.x
-    camera_y = (jiki.y>>8) / FIELD_H * (FIELD_H - SCREEN_H);
+    camera_x = Math.floor( (jiki.x>>8) / FIELD_W * (FIELD_W - SCREEN_W) );//Set the relative position to camera_x depends on jiki.x
+    camera_y = Math.floor( (jiki.y>>8) / FIELD_H * (FIELD_H - SCREEN_H) );
 
 
     //Print the boss enemy's HP
@@ -161,8 +163,24 @@ function drawAll() {
         virtualContext.fillStyle = "rgba(255, 0, 0, 0.5)";
         virtualContext.fillRect( camera_x+10, camera_y+10, size, 10 );
         virtualContext.strokeStyle = "rgba(255, 0, 0, 0.9)";
-        virtualContext.strokeRect(camera_x+10, camera_y+10, size2, 10);
+        virtualContext.strokeRect( camera_x+10, camera_y+10, size2, 10 );
     }
+
+    
+    //Print Jiki's HP
+    if ( 0 < jiki.hp ) {
+        let size  = ( SCREEN_W - 20 ) * jiki.hp / jiki.maxHp;
+        let size2 = SCREEN_W - 20;
+        virtualContext.fillStyle = "rgba(0, 0, 255, 0.5)";
+        virtualContext.fillRect( camera_x+10, camera_y+SCREEN_H-14, size, 10 );
+        virtualContext.strokeStyle = "rgba(0, 0, 255, 0.9)";
+        virtualContext.strokeRect( camera_x+10, camera_y+SCREEN_H-14, size2, 10 );
+    }
+
+    //Print the score
+    virtualContext.fillStyle = "white";
+    virtualContext.fillText( "SCORE " + score, camera_x+10, camera_y+14 );
+
 
     //Copy drawing from the virtual screen to the actual screen
     context.drawImage( $virtualCanvas, camera_x, camera_y, SCREEN_W, SCREEN_H,
@@ -204,28 +222,81 @@ function displayInfo () {
         context.fillText( "Y: " + (jiki.y>>8), 20, 140 );//Print the Jiki's position on the Y-axis
         context.fillText( "HP: " + jiki.hp, 20, 160 );//Print the jiki's HP
         context.fillText( "SCORE: " + score, 20, 180 );//Print the jiki's score using the global variable "score"
+        context.fillText( "COUNT: " + gameCount, 20, 200 );
+        context.fillText( "WAVE: " + gameWave, 20, 220 );
     }
 };
+
+
+let gameCount = 0;
+let gameWave  = 0;
+let gameRound = 0;
+
+let starSpeed        = 100;
+let starSpeedRequest = 100;
 
 
 //Repeat endlessly while playing
 function gameLoop () {
 
-    /*
-    //demo
-    if ( rand(0,30)==1 ) {
-        let randomNum = rand(0, 1);
-        enemy.push( new Enemy(randomNum,  rand(0,FIELD_W)<<8,  0,  0,  rand(300,1200)) );
+    gameCount++;
+    if ( starSpeed < starSpeedRequest ) {
+        starSpeed++;
+    } else if ( starSpeedRequest < starSpeed ) {
+        starSpeed--;
     }
-    */
+
+    if ( gameWave == 0 ) {
+        if ( rand(0,15)==1 ) {
+            enemy.push( new Enemy(0,  rand(0,FIELD_W)<<8,  0,  0,  rand(300,1200)) );
+        }
+
+        if ( (60*20) < gameCount ) { //After 20 seconds
+            gameWave++;
+            gameCount = 0;
+            starSpeedRequest = 200;
+        }
+    } else if ( gameWave == 1 ) {
+        if ( rand(0,15)==1 ) {
+            enemy.push( new Enemy(1,  rand(0,FIELD_W)<<8,  0,  0,  rand(300,1200)) );
+        }
+        
+        if ( (60*20) < gameCount ) { //After 20 seconds
+            gameWave++;
+            gameCount = 0;
+            starSpeedRequest = 100;
+        }
+    } else if ( gameWave == 2 ) {
+        if ( rand(0,10)==1 ) {
+            let randomNum = rand(0, 1);
+            enemy.push( new Enemy(randomNum,  rand(0,FIELD_W)<<8,  0,  0,  rand(300,1200)) );
+        }
+        
+        if ( (60*20) < gameCount ) { //After 20 seconds
+            gameWave++;
+            gameCount = 0;
+            enemy.push( new Enemy( 2, rand(0,FIELD_W/2)<<8,  -(70<<8),  0,  200 ) );//Display the boss enemy
+            starSpeedRequest = 600;
+        }
+    } else if ( gameWave == 3 ) {
+        if ( enemy.length == 0 ) { //After killing the enemy
+            gameWave  = 0;
+            gameCount = 0;
+            gameRound++;
+            starSpeedRequest = 100;
+        }
+    }
+
     
+
     updateAll();
     drawAll();
     displayInfo();
 };
 
+
 //Start the game once the page is loaded
 window.onload = function() {
     gameInit();
-    enemy.push( new Enemy( 2, rand(0,FIELD_W/2)<<8,  0,  0,  200 ) );
+    // enemy.push( new Enemy( 2, rand(0,FIELD_W/2)<<8,  0,  0,  200 ) );
 };
