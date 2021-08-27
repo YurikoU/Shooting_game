@@ -6,30 +6,38 @@
 // const DEBUG = true;
 const DEBUG = false;
 
+
 let drawCount = 0;
 let fps       = 0;
 let lastTime  = Date.now();
 
+
 //Game speed (ms) = 60 fps
 const GAME_SPEED = 1000/60;
 
+
 //Smoothing
 const SMOOTHING = false;
+
 
 //Screen size
 const SCREEN_W = 320;
 const SCREEN_H = 320;
 
+
 //Canvas size (the same aspect ratio as the screen size)
 const CANVAS_W = SCREEN_W * 2;
 const CANVAS_H = SCREEN_H * 2;
+
 
 //Field size
 const FIELD_W = SCREEN_W + 120;
 const FIELD_H = SCREEN_H + 40;
 
+
 //Max number of stars
 const STAR_MAX = 300;
+
 
 //Canvas
 let $canvas    = document.getElementById('can');
@@ -37,14 +45,17 @@ let context    = $canvas.getContext('2d');//Set the context as 2D
 $canvas.width  = CANVAS_W;
 $canvas.height = CANVAS_H;
 
+
 //Scaled images are smoothed
 context.mozimageSmoothingEnabled    = SMOOTHING;
 context.webkitimageSmoothingEnabled = SMOOTHING;
 context.msimageSmoothingEnabled     = SMOOTHING;
 context.imageSmoothingEnabled       = SMOOTHING;
 
+
 //Set the font size and family
 context.font = "20px 'Impact'";
+
 
 //Field (virtual canvas)
 let $virtualCanvas    = document.createElement('canvas');
@@ -53,23 +64,29 @@ $virtualCanvas.width  = CANVAS_W;
 $virtualCanvas.height = CANVAS_H;
 virtualContext.font   = "12px 'Impact'";
 
+
 //Coordinates of the camera
 let camera_x = 0;
 let camera_y = 0;
+
 
 //Game over flag
 let gameOver = false;
 let score    = 0;
 
+
 //Boss enemy's HP
 let bossHp    = 0;
 let bossMaxHp = 0;
 
+
 //Star 
 let star = [];
 
+
 //Keyboard status
 let keyStatus = [];
+
 
 //Objects
 let bullet      = [];
@@ -84,6 +101,14 @@ let spriteImage = new Image();
 spriteImage.src = "sprite.png";
 
 
+let gameCount = 0;
+let gameWave  = 0;
+let gameRound = 0;
+
+
+let starSpeed        = 100;
+let starSpeedRequest = 100;
+
 
 
 //Initialize the game settings
@@ -96,6 +121,7 @@ function gameInit() {
     //Get gameLoop() work every the certain millisecond
     setInterval( gameLoop, GAME_SPEED );
 };
+
 
 //Update an object (call by reference) 
 function updateObj ( obj ) {
@@ -110,6 +136,7 @@ function updateObj ( obj ) {
     }
 };
 
+
 //Draw an object (call by reference)
 function drawObj ( obj ) {
     //Draw a new object depend on the number of pressed keys
@@ -117,6 +144,7 @@ function drawObj ( obj ) {
         obj[i].draw();
     }
 };
+
 
 //Update all objects using updateObj() method
 function updateAll() {
@@ -130,6 +158,7 @@ function updateAll() {
         jiki.update();//Update the sprite position
     }
 };
+
 
 //Draw all objects using drawObj() method
 function drawAll() {
@@ -187,6 +216,7 @@ function drawAll() {
         0, 0, CANVAS_W, CANVAS_H );
 };
 
+
 function displayInfo () {
     context.fillStyle = "white";
 
@@ -226,14 +256,6 @@ function displayInfo () {
         context.fillText( "WAVE: " + gameWave, 20, 220 );
     }
 };
-
-
-let gameCount = 0;
-let gameWave  = 0;
-let gameRound = 0;
-
-let starSpeed        = 100;
-let starSpeedRequest = 100;
 
 
 //Repeat endlessly while playing

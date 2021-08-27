@@ -20,7 +20,6 @@ let enemyMaster =
 ];
 
 
-
 class Sprite {
     constructor( x, y, w, h ) {
         this.x = x;
@@ -29,6 +28,7 @@ class Sprite {
         this.height = h;
     };
 };//End of Sprite class
+
 
 //Size of each sprite image (px), an array of instances
 let sprite = [

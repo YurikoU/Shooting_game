@@ -104,7 +104,6 @@ class Explosion extends CharacterBase {
 };//End of Explosion class
 
 
-
 //Once a key is pressed, switch the status of JavaScript key code (US keyboards) to true
 document.onkeydown = function (e) {
     keyStatus[e.code] = true;
@@ -115,6 +114,7 @@ document.onkeydown = function (e) {
         score    = 0;
     }
 };
+
 
 //Once a key is released, switch the status of JavaScript key code (US keyboards) to false
 document.onkeyup = function (e) {
@@ -144,10 +144,12 @@ function drawSprite ( spriteIndex, x, y ) {
         px, py, spriteWidth, spriteHeight);
 };
 
+
 //Return a random integer between the min and the max, and both numbers are inclusive
 function rand( min, max ) {
     return Math.floor(Math.random() * (max-min+1)) + min;
 };
+
 
 //Check if the bullet is hit on the enemy
 // function checkHit( x1, y1, w1, h1,  x2, y2, w2, h2 ) {//Used for the hit box setup using rectangles
