@@ -45,10 +45,14 @@ class Enemy extends CharacterBase {
         this.score      = enemyMaster[index].score;
         this.flag       = false;
         this.direction  = 90;
+        this.reload     = 0;
     };
 
     update() {
         //Common update() process
+        if ( 0 < this.reload ) {
+            this.reload--;
+        }
         super.update();//Inherit update() from its parent class
 
         if ( 1000 <= this.maxHp ) {
@@ -165,6 +169,7 @@ function enemyMove02( obj ) {
     obj.spriteIndex = enemyPattern[ (obj.count>>3) & 3 ];//"...&3" is same as "...%4"    
 };
 
+
 //Movement Pattern #03 (enemy: boss enemy)
 function enemyMove03( obj ) {
 
@@ -209,18 +214,65 @@ function enemyMove03( obj ) {
         }
     }
 
-    //Additional hits
+    //Additional attacks by additional enemies
     if ( obj.hp < obj.maxHp/2 ) {
-        let c = obj.count % (60 * 5); //60*5 == 5 seconds 
+        let c = obj.count % (60 * 5); //60*5 is 5 seconds 
+        if ( (c/10) < 4 && c % 10 == 0 ) { // if c is 0, 10, 20, or 30
+
+            let angleFromEnemyToJiki   = ( 90 + 45 - (c/10) * 30) * Math.PI / 180;
+            let vectorXFromEnemyToJiki = Math.cos( angleFromEnemyToJiki ) * 300;
+            let vectorYFromEnemyToJiki = Math.sin( angleFromEnemyToJiki ) * 300;
+            let vectorX2               = ( Math.cos( angleFromEnemyToJiki ) * 70 )<<8;
+            let vectorY2               = ( Math.sin( angleFromEnemyToJiki ) * 70 )<<8;
+            enemy.push( 
+                new Enemy( 3, obj.x+vectorX2, obj.y+vectorY2, vectorXFromEnemyToJiki, vectorYFromEnemyToJiki )
+            );
+    
+        }
     }
 
-    // //Enemy image looks flapping
+    // Enemy image looks flapping
     obj.spriteIndex = 75;
 };
+
+
+//Movement Pattern #04 (enemy: final boss's child)
+function enemyMove04( obj ) {
+
+    //If count reaches 10, the enemy looks stopped
+    if ( obj.count == 10 ) {
+        obj.vectorX = obj.vectorY = 0;
+    }
+
+    //If count reaches 60, the enemy start moving forward Jiki
+    if ( obj.count == 60 ) {
+        if ( jiki.x < obj.x ) {
+            obj.vectorX = -30;
+        } else {
+            obj.vectorX = 30;
+            obj.vectorY = 100;
+        }
+    }
+
+    if ( 100 < obj.count && !obj.reload ) {
+        if ( rand(0,100) == 1 ) {
+            enemyShot( obj, 300 );
+            obj.reload = 200;
+        }
+    }
+
+
+    //Enemy image looks flapping
+    const enemyPattern = [ 33, 34, 33, 35 ];
+    obj.spriteIndex = enemyPattern[ (obj.count>>3) & 3 ];//"...&3" is same as "...%4"    
+};
+
+
 
 
 let enemyFunctionArray = [
     enemyMove01,
     enemyMove02,
     enemyMove03,
+    enemyMove04,
 ];
